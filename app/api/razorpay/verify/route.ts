@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 
-const razorpay = new Razorpay({
-    key_id: 'rzp_live_qzEA66nHs1SIL1',
-    key_secret: 'YcTEEP6hLeKbsCVR77MRGvRS',
-});
+// Lazy initialization of Razorpay client
+function getRazorpayClient() {
+    return new Razorpay({
+        key_id: 'rzp_live_qzEA66nHs1SIL1',
+        key_secret: 'YcTEEP6hLeKbsCVR77MRGvRS',
+    });
+}
 
 export async function POST(request: NextRequest) {
     try {
@@ -53,6 +56,9 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             );
         }
+
+        // Initialize Razorpay client only when needed
+        const razorpay = getRazorpayClient();
 
         // Fetch payment details from Razorpay
         const payment = await razorpay.payments.fetch(
